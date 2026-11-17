@@ -400,9 +400,16 @@ function mostrar(e, primera){
     <ul>${e.items.map(i => `<li>${i}</li>`).join('')}</ul>
     <div class="acc"><a class="btn btn-wa" href="${enlaceWa(e.msg)}" target="_blank" rel="noopener"><svg><use href="#wa"/></svg>Consultar este</a><a class="pdf" href="${e.pdf}" target="_blank">Descargar plano (PDF)</a></div>`;
   if (primera) return;
+  clearTimeout(espera);
+  img.alt = 'Plano: ' + e.tipo;
+  if (img.getAttribute('src') === e.img) { plano.classList.remove('cambia'); return; }
   plano.classList.add('cambia');
-  setTimeout(() => { img.src = e.img; img.alt = 'Plano: ' + e.tipo; img.onload = () => plano.classList.remove('cambia'); }, 220);
+  espera = setTimeout(() => {
+    const listo = () => plano.classList.remove('cambia');
+    img.onload = listo; img.onerror = listo; img.src = e.img;
+  }, 220);
 }
+let espera;
 ESPACIOS.forEach((e, i) => {
   const b = document.createElement('button'); b.className = 'tab'; b.role = 'tab'; b.dataset.id = e.id; b.textContent = e.tab;
   b.onclick = () => mostrar(e); tabs.appendChild(b);
